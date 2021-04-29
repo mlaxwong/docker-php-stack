@@ -1,4 +1,4 @@
-FROM mlaxwong/php-stack:7.2.0
+FROM mlaxwong/php-stack:7.4.0
 
 # Install xdebug
 RUN yes | pecl install xdebug \
