@@ -44,6 +44,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# RUN composer self-update --snapshot
 RUN composer self-update --snapshot
 
 # Install NodeJS
