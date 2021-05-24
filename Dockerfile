@@ -60,6 +60,22 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 RUN node -v
 RUN npm -v
 
+# Install Python 3.8
+ENV PYTHON_VERSION 3.8.5
+
+WORKDIR /pythoninstall
+RUN curl -O https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tar.xz
+RUN tar -xf Python-$PYTHON_VERSION.tar.xz
+
+WORKDIR /pythoninstall/Python-$PYTHON_VERSION
+RUN ./configure --enable-optimizations
+RUN make -j 4
+RUN make altinstall
+
+WORKDIR /
+RUN rm -rf /pythoninstall
+RUN python3.8 --version
+
 # Clean up
 RUN apt-get autoremove -y \
     && apt-get clean -y \
