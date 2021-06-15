@@ -49,20 +49,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN composer self-update
 RUN composer --version
 
-# Install xdebug
-RUN yes | pecl install xdebug \
-	&& echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" \
-		 > /usr/local/etc/php/conf.d/xdebug.ini \
-	&& echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/xdebug.ini \
-	&& echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/xdebug.ini \
-	&& echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/xdebug.ini \
-	&& echo "xdebug.log_level=0" >> /usr/local/etc/php/conf.d/xdebug.ini
-
-# Dev Composer Cli
-WORKDIR /usr/local/bin
-RUN wget -O devcomposercli https://raw.githubusercontent.com/mlaxwong/devcomposercli/1.0.0/builds/devcomposercli
-RUN chmod +x /usr/local/bin/devcomposercli
-
 # Install NodeJS
 ARG NODE_VERSION=14.11.0
 ARG NVM_DIR=/usr/local/nvm
@@ -78,11 +64,9 @@ RUN node -v
 RUN npm -v
 
 # Directory restructure
-ENV DEVTOOL_LOCALPACKAGE_PATH /localpackages
 ENV APP_ROOT /app
 ENV APACHE_DOCUMENT_ROOT /app/public
 
-WORKDIR ${DEVTOOL_LOCALPACKAGE_PATH}
 WORKDIR ${APP_ROOT}
 WORKDIR ${APACHE_DOCUMENT_ROOT}
 RUN echo "<?php phpinfo(); ?>" > index.php
@@ -97,9 +81,7 @@ RUN chown -R www-data:www-data ${APP_ROOT} \
     && a2enmod rewrite
 
 # Volume
-# VOLUME /root/.gitconfig
 VOLUME ${APP_ROOT}
-VOLUME ${DEVTOOL_LOCALPACKAGE_PATH}
 
 # Change back to default directory
 WORKDIR ${APP_ROOT}
