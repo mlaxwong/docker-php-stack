@@ -1,4 +1,4 @@
-FROM php:8.0.7-apache
+FROM php:8.0.7-fpm
 
 # Update
 RUN apt-get update && \
@@ -23,9 +23,6 @@ RUN apt-get -y install \
 	libzip-dev \
 	libonig-dev \
     g++
-
-# .htaccess mod_rewrite for URL rewrite
-RUN a2enmod rewrite headers
 
 # PHP extensions
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
@@ -80,24 +77,15 @@ RUN npm -v
 # Directory restructure
 ENV DEVTOOL_LOCALPACKAGE_PATH /localpackages
 ENV APP_ROOT /app
-ENV APACHE_DOCUMENT_ROOT /app/public
 
 WORKDIR ${DEVTOOL_LOCALPACKAGE_PATH}
 WORKDIR ${APP_ROOT}
-WORKDIR ${APACHE_DOCUMENT_ROOT}
 RUN echo "<?php phpinfo(); ?>" > index.php
-
-# Change Apache Document Root
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 # Permission
 RUN chmod -R 755 ${APP_ROOT}
-RUN chown -R www-data:www-data ${APP_ROOT} \
-    && a2enmod rewrite
 
 # Volume
-# VOLUME /root/.gitconfig
 VOLUME ${APP_ROOT}
 VOLUME ${DEVTOOL_LOCALPACKAGE_PATH}
 
