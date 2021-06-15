@@ -97,7 +97,7 @@ RUN chown -R www-data:www-data ${APP_ROOT} \
     && a2enmod rewrite
 
 # Volume
-VOLUME /root/.gitconfig
+# VOLUME /root/.gitconfig
 VOLUME ${APP_ROOT}
 VOLUME ${DEVTOOL_LOCALPACKAGE_PATH}
 
